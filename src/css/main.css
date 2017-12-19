@@ -25,6 +25,7 @@
 }
 
 .register {
+    min-height: 1em;
     min-width: 20px;
     background-color: aliceblue;
     border: thin solid;
@@ -40,6 +41,7 @@
 }
 
 .stack {
+    min-height: 1em;
     display: inline-flex;
     flex-direction: row-reverse;
     overflow: hidden;
