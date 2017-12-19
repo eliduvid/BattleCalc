@@ -22,7 +22,7 @@ export class IllegalState extends Error {
 
 export class ParseException extends Error {
     constructor(msg, readonly line: number) {
-        super(`(on line ${line})${+msg}`);
+        super(`(on line ${line + 1}) ${msg}`);
         this.name = 'ParseException';
     }
 
