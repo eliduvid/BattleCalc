@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Battle calc</title>
+    <script data-main="minified/config_prod" src="node_modules/requirejs/require.js"></script>
+    <link rel="stylesheet" href="node_modules/codemirror/lib/codemirror.css">
+    <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+<div class="page-content">
+    <div class="editor_wrapper">
+        <!--suppress HtmlFormInputWithoutLabel -->
+        <textarea class="editor" id="editor"></textarea>
+        <div class="buttons_wrapper" id="buttons_wrapper"></div>
+    </div>
+    <div class="runtime_wrapper">
+        <div class="registers_wrapper" id="registers_wrapper"></div>
+        <div class="stack_wrapper">
+            <span class="stack" id="stack"></span>
+            <span class="stack_holder">|</span>
+        </div>
+        <div class="console_wrapper">
+            <div class="console_out_wrapper">
+                <div class="console_out" id="console_out">
+                </div>
+            </div>
+            <div class="console_in_wrapper">
+                <label for="console_in" class="console_in_prefix">&gt;</label>
+                <input type="text" class="console_in" id="console_in">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="description_wrapper">
+    <h3>What is this?</h3>
+    <p>
+        Interpreter for simplified assembly-like language. Just write your code in editor (command reference below) and press run.
+    </p>
+    <h3>Console</h3>
+    <p>
+        Takes whitespace-separated integer numbers and gives them one-by-one to READ command.
+    </p>
+    <h3>Available commands:</h3>
+    <div id="description"></div>
+    <h3>
+        Author
+    </h3>
+    <p>
+        <a href="mailto:eliduvid@yandex.com">Eliyahu Duvidzon</a>. All complains send to me.
+    </p>
+    <h3>
+        Source code
+    </h3>
+    <p>
+        On gitlab: <a href="https://gitlab.com/eliduvid1/battle-calc">https://gitlab.com/eliduvid1/battle-calc</a>.
+    </p>
+</div>
+</body>
+</html>

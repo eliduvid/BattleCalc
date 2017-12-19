@@ -1,0 +1,30 @@
+; Example program
+; Infinitely takes numbers and multiplies them
+
+.Loop ; Global infinite loop
+    ; Getting input
+    read a
+    read b
+
+    ; Preserving value of B
+    push b
+
+    ; Putting zero in C
+    sub c c
+
+    jnz b .loop
+    jmp .loopEnd
+    .loop ; while B < 0
+        add c a
+        dec b
+    jnz b .loop
+    .loopEnd
+
+    ; Retrieving value of B
+    pop b
+
+    ; Output
+    print a
+    print b
+    print c
+jmp .Loop

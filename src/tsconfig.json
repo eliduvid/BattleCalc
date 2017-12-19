@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "module": "AMD",
+    "target": "es2015",
+    "baseUrl": ".",
+    "moduleResolution": "node"
+  },
+  "exclude": [
+    "node_modules/**/*"
+  ],
+  "include": [
+    "./**/*"
+  ]
+}

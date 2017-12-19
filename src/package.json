@@ -1,0 +1,29 @@
+{
+  "name": "battle_calc",
+  "version": "1.0.0",
+  "description": "In-browser interpreter for assemby-like language.",
+  "main": "./js/config.js",
+  "repository": "gitlab:eliduvid1/battle-calc",
+  "author": "eliduvid",
+  "license": "ISC",
+  "scripts": {
+    "tsc": "tsc",
+    "babc": "babel js -d compiled",
+    "minify": "uglifyjs-folder compiled -ex \".js\" -e -o minified",
+    "build": "npm run tsc && npm run babc && npm run minify"
+  },
+  "dependencies": {
+    "@types/codemirror": "0.0.53",
+    "codemirror": "^5.32.0",
+    "requirejs": "^2.3.5",
+    "typescript": "^2.6.2"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-es2015": "^6.24.1",
+    "uglify-js": "^3.2.2",
+    "uglifyjs-folder": "^1.5.0"
+  }
+}

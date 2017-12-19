@@ -1,0 +1,126 @@
+.running_mark {
+    font-size: xx-large;
+    margin-top: -8px;
+    color: red;
+}
+
+.page-content {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.runtime_wrapper, .editor_wrapper {
+    padding-bottom: 10px;
+}
+
+.runtime_wrapper {
+    padding: 10px;
+    width: 300px;
+}
+
+.registers_wrapper {
+    display: flex;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+}
+
+.register {
+    min-width: 20px;
+    background-color: aliceblue;
+    border: thin solid;
+    padding: 2px;
+    text-align: center;
+}
+
+.stack_wrapper {
+    margin-top: 2px;
+    border-top: solid;
+    border-right: solid;
+    border-bottom: solid;
+}
+
+.stack {
+    display: inline-flex;
+    flex-direction: row-reverse;
+    overflow: hidden;
+}
+
+.stack_item {
+    margin-right: 5px;
+    border: thin solid aqua;
+}
+
+.console_wrapper {
+    width: 100%;
+    margin-top: 2px;
+}
+
+.console_out {
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+}
+
+.console_in {
+    border: 0;
+    min-width: 10px;
+}
+
+.console_in:focus {
+    border: 0;
+    outline: none;
+}
+
+.console_out, .console_in, .console_in_prefix, .console_wrapper {
+    background-color: black;
+    color: white;
+    font-family: Monospaced, monospace;
+    font-weight: bold;
+    font-size: medium;
+}
+
+.console_message {
+    white-space: pre-wrap;      /* CSS3 */
+    white-space: -moz-pre-wrap; /* Firefox */
+    /*noinspection CssInvalidPropertyValue*/
+    white-space: -pre-wrap;     /* Opera <7 */
+    white-space: -o-pre-wrap;   /* Opera 7 */
+    word-wrap: break-word;      /* IE */
+}
+
+.error {
+    color: red;
+}
+
+.console_out_wrapper {
+    height: 400px;
+    position: relative;
+    overflow: hidden;
+}
+
+.console_in_wrapper {
+    display: flex;
+}
+
+.console_in_prefix {
+    padding-right: 1ex;
+}
+
+.editor_wrapper {
+    position: relative;
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+}
+
+.CodeMirror {
+    min-height: 300px;
+    max-height: 100%;
+    flex-grow: 100;
+}
+
+.buttons_wrapper {
+    display: flex;
+    justify-content: flex-end;
+    padding-right: 3px;
+}
