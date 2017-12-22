@@ -27,18 +27,15 @@ ready(async () => {
     let parser = new CommandParser(commandIndex);
     let editor = new EditorWrapper(<HTMLTextAreaElement>$('editor'));
     editor.enable();
-    let console = new ConsoleWrapper(<HTMLInputElement>$('console_in'), $('console_out'));
-    console.disable();
+    let innerConsole = new ConsoleWrapper(<HTMLInputElement>$('console_in'), $('console_out'));
+    innerConsole.disable();
     let stack = new StackWrapper($('stack'));
     let registers = new RegistersWrapper($('registers_wrapper'), 'A', 'B', 'C');
-    let command = new CommandEditorWrapper(parser, editor, console, stack, registers);
+    let command = new CommandEditorWrapper(parser, editor, innerConsole, stack, registers);
     let runtime: RuntimeWrapper = null;
     let buttons = new RunButtonsWrapper($('buttons_wrapper'), () => {
         runtime = command.compile();
-        runtime.run().catch((e) => {
-            console.error(e.toString());
-            buttons.stop();
-        });
+        runtime.run().catch((e) => innerConsole.error(e.toString())).finally(buttons.stop.bind(buttons));
     }, () => {
         runtime.pause();
     }, () => {
@@ -46,11 +43,11 @@ ready(async () => {
     }, () => {
         runtime.stop();
     }, () => {
-        console.clear();
+        innerConsole.clear();
         stack.clear();
         registers.clear();
     }, (e: Error) => {
-        console.error(e.toString());
+        innerConsole.error(e.toString());
     });
 
     if (getURLKeys()['demo'] === 'true') {

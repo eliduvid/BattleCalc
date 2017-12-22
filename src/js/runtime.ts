@@ -125,11 +125,11 @@ export class CommandRuntime {
         this.skipEmpty();
     }
 
-    async executeAll(runtime: Runtime, stepCallback: (Runtime) => Promise<any>) {
+    async executeAll(runtime: Runtime, stepCallback: (runtime: Runtime) => Promise<any>) {
         await stepCallback(runtime);
         while (this.isRunning()) {
             await this.executeCurrentCommand(runtime);
-            await stepCallback(runtime)
+            await stepCallback(runtime);
         }
     }
 
@@ -173,7 +173,7 @@ export class Runtime {
         await this.commandRuntime.executeCurrentCommand(this);
     }
 
-    async executeAll(stepCallback): Promise<void> {
+    async executeAll(stepCallback: (runtime: Runtime) => Promise<any>): Promise<void> {
         await this.commandRuntime.executeAll(this, stepCallback);
     }
 }

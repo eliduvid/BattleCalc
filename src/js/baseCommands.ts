@@ -196,7 +196,10 @@ export class Read implements Command {
     }
 
     async run(runtime: Runtime): Promise<void> {
-        runtime.getRegisterByName(this.register).value = await runtime.stdin.getValue();
+        runtime.getRegisterByName(this.register).value = await runtime.stdin.getValue().catch((reason) => {
+            if (console && console.log) console.log(`Input returned no value with error: ${reason.toString()}`);
+            return runtime.getRegisterByName(this.register).value;
+        });
     }
 
     affecting: ReadonlyArray<AffectingType> = [

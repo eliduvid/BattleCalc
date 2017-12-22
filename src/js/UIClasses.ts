@@ -6,12 +6,29 @@ import {Command} from "./commands";
 import {EditorFromTextArea, fromTextArea} from "codemirror";
 import CommandParser from "./commandParser";
 
+function randomInteger(min, max) {
+    return Math.floor(min + Math.random() * (max + 1 - min));
+}
+
 function sleep(milliseconds: number) {
     return new Promise(resolve => setTimeout(resolve, milliseconds));
 }
 
-function randomInteger(min, max) {
-    return Math.floor(min + Math.random() * (max + 1 - min));
+class Sleeper {
+    private basePromise: Promise<void> = Promise.resolve();
+
+    sleep(milliseconds: number): Promise<void> {
+        return this.basePromise
+            .then(() => new Promise<void>(resolve => setTimeout(resolve, milliseconds)));
+    }
+
+    interrupt(reason?: any) {
+        this.basePromise = Promise.reject(reason);
+    }
+
+    reset() {
+        this.basePromise = Promise.resolve();
+    }
 }
 
 class Resolvable {
@@ -29,11 +46,12 @@ Resolvable.resolved.resolve();
 
 export class ConsoleWrapper {
     private inputQueue: Queue = new Queue();
+    private sleeper: Sleeper = new Sleeper();
 
     constructor(private consoleIn: HTMLInputElement, private consoleOut: HTMLElement) {
         consoleIn.addEventListener('keypress', (event: KeyboardEvent) => {
             if (event.keyCode === 13 && consoleIn.value.trim()) {
-                if (consoleIn.value.match(/^\s*\d+(\d|\s)*$/)) {
+                if (consoleIn.value.match(/^\s*-?\d+(\s+-?\d+)*\s*$/)) {
                     let values = consoleIn.value.trim().split(/\s+/).map(num => parseInt(num));
                     this.inputQueue.push(...values);
                     this.inputLog(values.join(' '));
@@ -48,12 +66,12 @@ export class ConsoleWrapper {
     async getInputValue(): Promise<number> {
         let output = this.inputQueue.pop();
         for (let i = 5; i < 0 && output === undefined; i--) {
-            await sleep(200);
+            await this.sleeper.sleep(200);
         }
         if (output === undefined) {
             this.std('Waiting for input:');
             while (output === undefined) {
-                await sleep(200);
+                await this.sleeper.sleep(200);
                 output = this.inputQueue.pop();
             }
         }
@@ -63,6 +81,7 @@ export class ConsoleWrapper {
     clear(): void {
         this.inputQueue.clear();
         this.consoleOut.innerHTML = '';
+        this.consoleIn.value = '';
     }
 
     std(line: string) {
@@ -82,11 +101,14 @@ export class ConsoleWrapper {
     }
 
     disable() {
+        this.sleeper.interrupt(`Input disabled
+        (If you are seeing this in console, it's ok. It's just because of saving rejected promises.)`);
         this.consoleIn.value = '';
         this.consoleIn.disabled = true;
     }
 
     enable() {
+        this.sleeper.reset();
         this.consoleIn.disabled = false;
     }
 }
@@ -125,7 +147,7 @@ export class EditorWrapper {
     }
 
     disable() {
-        this.editor.setOption('readOnly', "nocursor");
+        this.editor.setOption('readOnly', true);
     }
 }
 
@@ -220,7 +242,7 @@ export class CommandEditorWrapper {
 
     constructor(private parser: CommandParser,
                 private editor: EditorWrapper,
-                private console: ConsoleWrapper,
+                private consoleWrapper: ConsoleWrapper,
                 private stack: StackWrapper,
                 private registers: RegistersWrapper) {
         this.commandEditor = new CommandEditor(this.registers.registerNames());
@@ -229,8 +251,8 @@ export class CommandEditorWrapper {
     compile(): RuntimeWrapper {
         this.commandEditor.removeCommands();
         this.commandEditor.addCommands(...this.parser.parseText(this.editor.text));
-        let runtime = this.commandEditor.execute(this.console.std.bind(this.console), this.console.getInputValue.bind(this.console));
-        return new RuntimeWrapper(runtime, this.editor, this.console, this.stack, this.registers);
+        let runtime = this.commandEditor.execute(this.consoleWrapper.std.bind(this.consoleWrapper), this.consoleWrapper.getInputValue.bind(this.consoleWrapper));
+        return new RuntimeWrapper(runtime, this.editor, this.consoleWrapper, this.stack, this.registers);
     }
 }
 
@@ -239,24 +261,24 @@ export class RuntimeWrapper {
 
     constructor(private runtime: Runtime,
                 private editor: EditorWrapper,
-                private console: ConsoleWrapper,
+                private consoleWrapper: ConsoleWrapper,
                 private stack: StackWrapper,
                 private registers: RegistersWrapper) {
     }
 
     clear(): void {
-        this.console.clear();
+        this.consoleWrapper.clear();
         this.stack.clear();
         this.registers.clear()
     }
 
     consoleActive() {
-        this.console.enable();
+        this.consoleWrapper.enable();
         this.editor.disable();
     }
 
     editorActive() {
-        this.console.disable();
+        this.consoleWrapper.disable();
         this.editor.enable();
     }
 
@@ -268,7 +290,7 @@ export class RuntimeWrapper {
             this.setVisibleState();
             await sleep(1000);
             await this.pausePromise.promise;
-        });
+        }).finally(this.stop.bind(this));
     }
 
     pause() {
@@ -280,8 +302,8 @@ export class RuntimeWrapper {
     }
 
     stop() {
-        this.editor.unmark();
         this.runtime.commandRuntime.finish();
+        this.editor.unmark();
         this.unpause();
         this.editorActive();
     }
@@ -289,8 +311,6 @@ export class RuntimeWrapper {
     setVisibleState() {
         if (this.runtime.commandRuntime.isRunning()) {
             this.editor.markLine(this.runtime.commandRuntime.activeCommandIndex);
-        } else {
-            this.editor.unmark();
         }
         this.registers.set(this.runtime);
         this.stack.value = this.runtime.stack;
