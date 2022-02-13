@@ -1,7 +1,7 @@
 # BattleCalc
-Interpreter for simplified assembly-like language. Originally was intended as a learning tool, but ended up never used like one. Working version available at https://battle-calc.neocities.org/
+Interpreter for simplified assembly-like language. Originally was hosted on gitlab and intended as a learning tool, but ended up never used like one. Working version available at https://battle-calc.neocities.org/
 
-[I tried to host it on github pages, but require.js bodel I used then for some reason is not compatible with it 🤷‍♂️]
+[I tried to host it on github pages, but require.js model I used then for some reason is not compatible with it 🤷‍♂️]
 
 Yeah, and historic origins of the name are complicated and not so interesting.
 
